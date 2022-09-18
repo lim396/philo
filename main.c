@@ -216,15 +216,15 @@ void	print_status(int status, t_philo *philo)
 
 	just_now = get_elapsed_time_in_ms(philo->config->start_time);
 	if (status == TAKEN_A_FORK && !check_end(philo))
-		printf("%ld Philosopher %d has taken a fork\n", just_now, philo->id);
+		printf("%ld Philosopher %d has taken a fork\n", just_now, philo->id + 1);
 	else if (status == EATINGN && !check_end(philo))
-		printf("%ld Philosopher %d is eating\n", just_now, philo->id);
+		printf("%ld Philosopher %d is eating\n", just_now, philo->id + 1);
 	else if (status == SLEEPING && !check_end(philo))
-		printf("%ld Philosopher %d is sleeping\n", just_now, philo->id);
+		printf("%ld Philosopher %d is sleeping\n", just_now, philo->id + 1);
 	else if (status == THINKING && !check_end(philo))
-		printf("%ld Philosopher %d is thinking\n", just_now, philo->id);
+		printf("%ld Philosopher %d is thinking\n", just_now, philo->id + 1);
 	else if (status == DIE)
-		printf("%ld Philosopher %d died\n", just_now, philo->id);
+		printf("%ld Philosopher %d died\n", just_now, philo->id + 1);
 	pthread_mutex_unlock(philo->info->get_time_and_print);
 }
 
@@ -281,21 +281,60 @@ void	thinking(t_philo *philo)
 //	usleep(200); //necessary?
 }
 
+int	ft_abs(int num)
+{
+	if (num < 0)
+		return (-(num + 1) + 1u);
+	return (num);
+}
+
 void	routine(void *arg)
 {
+	int	i;
 	int	n;
+	int	ones_digit;
+//	int	sleep_start_time;
 	t_philo *philo;
 
 	philo = (t_philo *)arg;
 //	printf("num_of_philo %d\n", philo->config->number_of_philosophers);
 //	printf("thread ok\n");
 	n = philo->config->number_of_philosophers;
-	if (philo->id % 2)
-		usleep(100);
+	if (((philo->id + 1) % 2 == 0 && (philo->id + 1) % 4 != 0) || ((philo->id + 1) % 5 == 0))
+		usleep(500);
+//		usleep(philo->config->time_to_eat * 1000);
+	if ((philo->id + 1) % 4 == 0)
+		usleep(200);
+//		usleep(philo->config->time_to_eat * 1000 / 2);
+	ones_digit = (philo->id + 1) % 10;
+	if (ones_digit > 5 || ones_digit == 0)
+		ones_digit = ft_abs(ones_digit - 5);
+//	if ((philo->id + 1) % 3 == 0)
+//	{
+//		while (get_elapsed_time_in_ms(philo->config->start_time) - philo->last_ate_time + 10 < philo->config->time_to_die)
+//		usleep(10);
+//		sleep_start_time = get_elapsed_time_in_ms(philo->config->start_time);
+//		while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time < (philo->config->time_to_eat))
+//		usleep(10);
+//	}
+	i = 0;
+	if (ones_digit == 4 || ones_digit == 5)
+		i = 1;
 //	printf("conf ok\n");
 	while (!check_end(philo))
 	{
-//		printf("check end ok\n");
+//		ones_digit = (philo->id + 1) % 10;
+//		if (ones_digit > 5 || ones_digit == 0)
+//			ones_digit = ft_abs(ones_digit - 5);
+//		if (i == 3)
+//			i = 0;
+//		if (i == 2)
+//		{
+////			sleep_start_time = get_elapsed_time_in_ms(philo->config->start_time);
+//			while (get_elapsed_time_in_ms(philo->config->start_time) - philo->last_ate_time < philo->config->time_to_die / 2)
+//			usleep(10);
+//		}
+//			i = 0;
 		pthread_mutex_lock(&(philo->info->fork)[philo->id]);
 		pthread_mutex_lock(&(philo->info->fork)[(philo->id + 1) % n]);
 //		printf("mutex ok\n");
@@ -312,6 +351,7 @@ void	routine(void *arg)
 		}
 		sleeping(philo);
 		thinking(philo);
+		i++;
 	}
 	return ;
 }

@@ -300,15 +300,16 @@ void	routine(void *arg)
 //	printf("num_of_philo %d\n", philo->config->number_of_philosophers);
 //	printf("thread ok\n");
 	n = philo->config->number_of_philosophers;
-	if (((philo->id + 1) % 2 == 0 && (philo->id + 1) % 4 != 0) || ((philo->id + 1) % 5 == 0))
+//	if (((philo->id + 1) % 2 == 0 && (philo->id + 1) % 4 != 0) || ((philo->id + 1) % 5 == 0))
+	if (((philo->id + 1) % 2 == 0) || ((philo->id + 1) % 5 == 0))
 		usleep(500);
 //		usleep(philo->config->time_to_eat * 1000);
-	if ((philo->id + 1) % 4 == 0)
-		usleep(200);
+//	if ((philo->id + 1) % 4 == 0)
+//		usleep(200);
 //		usleep(philo->config->time_to_eat * 1000 / 2);
-	ones_digit = (philo->id + 1) % 10;
-	if (ones_digit > 5 || ones_digit == 0)
-		ones_digit = ft_abs(ones_digit - 5);
+//	ones_digit = (philo->id + 1) % 10;
+//	if (ones_digit > 5 || ones_digit == 0)
+//		ones_digit = ft_abs(ones_digit - 5);
 //	if ((philo->id + 1) % 3 == 0)
 //	{
 //		while (get_elapsed_time_in_ms(philo->config->start_time) - philo->last_ate_time + 10 < philo->config->time_to_die)
@@ -317,9 +318,9 @@ void	routine(void *arg)
 //		while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time < (philo->config->time_to_eat))
 //		usleep(10);
 //	}
-	i = 0;
-	if (ones_digit == 4 || ones_digit == 5)
-		i = 1;
+//	i = 0;
+//	if (ones_digit == 4 || ones_digit == 5)
+//		i = 1;
 //	printf("conf ok\n");
 	while (!check_end(philo))
 	{

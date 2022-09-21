@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
@@ -12,6 +13,9 @@
 #define SLEEPING 2
 #define THINKING 3
 #define DIE 4
+
+#define MONITOR_ERROR 8
+#define PHILO_ERROR 16
 
 typedef struct s_config	t_config;
 struct s_config
@@ -110,34 +114,68 @@ void	init_config(char **argv, t_config *config)
 		config->num_of_must_eat = atoi(argv[5]);
 }
 
-void	init_overall_info(int n, t_overall_info *info)
+void	malloc_error_handler(int n, t_overall_info *info, t_philo **philo)
 {
-	int	i;
+	int i;
 
+	i = 0;
+	if (philo != NULL)
+	{
+		while (i < n)
+		{
+			free((*philo)[i].last_ate);
+			i++;
+		}
+		free(*philo);
+	}
+	free(info->fork);
+	free(info->end_meals);
+	free(info->get_time_and_print);
+	free(info->end_flag);
+	printf("malloc error\n");
+}
+
+int	init_overall_info(int n, t_overall_info *info)
+{
+//	int	i;
+	memset(info, 0, sizeof(*info));
 	info->n_of_finish_eat = 0;
 	info->end_simulation = 0;
 	info->end_meals = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(info->end_meals, NULL);
 	info->get_time_and_print = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(info->get_time_and_print, NULL);
 	info->end_flag = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(info->end_flag, NULL);
 	info->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * n);
-	i = 0;
-	while (i < n)
+	if (!(info->end_meals) || !(info->get_time_and_print)
+		|| !(info->end_flag) || !(info->fork))
 	{
-		pthread_mutex_init(&(info->fork)[i], NULL);
-		i++;
+		malloc_error_handler(0, info, NULL);
+		return (1);
 	}
+	return (0);
+//	pthread_mutex_init(info->end_meals, NULL);
+//	pthread_mutex_init(info->get_time_and_print, NULL);
+//	pthread_mutex_init(info->end_flag, NULL);
+//	i = 0;
+//	while (i < n)
+//	{
+//		pthread_mutex_init(&(info->fork)[i], NULL);
+//		i++;
+//	}
 }
 
-void	init_philosophers(t_config *config, t_overall_info *info, t_philo **philo)
+int	init_philosophers(t_config *config, t_overall_info *info, t_philo **philo)
 {
 	int	i;
 	int	n;
 
 	n = config->number_of_philosophers;
-	*philo = (t_philo *)malloc(sizeof(t_philo) * n);
+//	*philo = (t_philo *)malloc(sizeof(t_philo) * n);
+	*philo = (t_philo *)calloc(sizeof(t_philo), n);
+	if (*philo == NULL)
+	{
+		malloc_error_handler(0, info, philo);
+		return (1);
+	}
 	i = 0;
 	while (i < n)
 	{
@@ -146,7 +184,32 @@ void	init_philosophers(t_config *config, t_overall_info *info, t_philo **philo)
 		(*philo)[i].config = config;
 		(*philo)[i].info = info;
 		(*philo)[i].last_ate_time = 0;
+//		if (i == 3)
+//			(*philo)[i].last_ate = NULL;
+//		else
 		(*philo)[i].last_ate = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+		if ((*philo)[i].last_ate == NULL)
+		{
+			malloc_error_handler(i, info, philo);
+			return (1);
+		}
+//		pthread_mutex_init((*philo)[i].last_ate, NULL);
+		i++;
+	}
+	return (0);
+}
+
+void	init_mutex(int n, t_overall_info *info, t_philo **philo)
+{
+	int	i;
+
+	pthread_mutex_init(info->end_meals, NULL);
+	pthread_mutex_init(info->get_time_and_print, NULL);
+	pthread_mutex_init(info->end_flag, NULL);
+	i = 0;
+	while (i < n)
+	{
+		pthread_mutex_init(&(info->fork)[i], NULL);
 		pthread_mutex_init((*philo)[i].last_ate, NULL);
 		i++;
 	}
@@ -245,7 +308,7 @@ void	routine(void *arg)
 	philo = (t_philo *)arg;
 	n = philo->config->number_of_philosophers;
 	if (((philo->id + 1) % 2 == 0) || ((philo->id + 1) % 5 == 0))
-		usleep(500);
+		usleep(200);
 	while (!check_end(philo))
 	{
 		pthread_mutex_lock(&(philo->info->fork)[philo->id]);
@@ -274,8 +337,7 @@ void	big_brother(void *arg)
 
 	philo = (t_philo *)arg;
 	while (1)
-	{
-		
+	{	
 		pthread_mutex_lock(philo->info->end_meals);
 		if (philo->info->n_of_finish_eat == philo->config->number_of_philosophers)
 		{
@@ -286,7 +348,7 @@ void	big_brother(void *arg)
 		i = 0;
 		while (i < philo->config->number_of_philosophers)
 		{
-			pthread_mutex_lock(philo[i].last_ate);
+			pthread_mutex_lock(philo[i].last_ate); //cut func check_died
 			now_time = get_elapsed_time_in_ms(philo->config->start_time);
 			if (now_time - philo[i].last_ate_time >= philo->config->time_to_die)
 			{
@@ -297,11 +359,70 @@ void	big_brother(void *arg)
 				print_status(DIE, &philo[i]);
 				return ;
 			}
-			pthread_mutex_unlock(philo[i].last_ate);
+			pthread_mutex_unlock(philo[i].last_ate); //so_far
 			i++;
 		}
 		usleep(100);
 	}
+}
+
+int	thread_error_handler(t_philo *philo, int flag)
+{
+	pthread_mutex_lock(philo->info->end_flag);
+	philo->info->end_simulation = 1;
+	pthread_mutex_unlock(philo->info->end_flag);
+	return (flag);
+}
+
+void	thread_processing(int n, t_philo *philo)
+{
+	int	i;
+	int j;
+	pthread_t	monitor;
+	int	error_flag;
+
+	error_flag = 0;
+	i = 0;
+	while (i < n)
+	{
+		if (pthread_create(&philo[i].thread, NULL, (void *)routine, &philo[i]) != 0)
+		{
+			error_flag |= thread_error_handler(&philo[i], PHILO_ERROR);
+			break ;
+		}
+		i++;
+	}
+	if (pthread_create(&monitor, NULL, (void *)big_brother, philo) != 0)
+		error_flag |= thread_error_handler(philo, MONITOR_ERROR);
+	j = 0;
+	while (j < i)
+		pthread_join(philo[j++].thread, NULL);
+	if (!(error_flag & MONITOR_ERROR))
+		pthread_join(monitor, NULL);
+	if (error_flag > 0)
+		printf("pthread_create_error\n");
+}
+
+void	destroy_mutex(int n, t_overall_info *info, t_philo **philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		pthread_mutex_destroy((*philo)[i].last_ate);
+		free((*philo)[i].last_ate);
+		pthread_mutex_destroy(&(info->fork)[i]);
+		i++;
+	}
+	free(info->fork);
+	pthread_mutex_destroy(info->end_meals);
+	pthread_mutex_destroy(info->get_time_and_print);
+	pthread_mutex_destroy(info->end_flag);
+	free(info->end_meals);
+	free(info->get_time_and_print);
+	free(info->end_flag);
+	free(*philo);	
 }
 
 int	main(int argc, char **argv)
@@ -309,51 +430,58 @@ int	main(int argc, char **argv)
 	t_config	config;
 	t_overall_info	info;
 	t_philo		*philo;
-	pthread_t	monitor;
-	int	i;
-	int	debg;
+//	pthread_t	monitor;
+//	int	i;
+//	int	debg;
 	struct timeval	now;
 
 	if (!check_args(argc, argv))
 		return (1);
 	init_config(argv, &config);
-	init_overall_info(config.number_of_philosophers, &info);
-	init_philosophers(&config, &info, &philo);
+	if (init_overall_info(config.number_of_philosophers, &info) != 0)
+		return (1);
+	if (init_philosophers(&config, &info, &philo) != 0)
+		return (1);
+	init_mutex(config.number_of_philosophers, &info, &philo);
 	gettimeofday(&now, NULL);
 	philo->config->start_time = (now.tv_sec * 1e3) + (now.tv_usec * 1e-3);
-	i = 0;
-	while (i < config.number_of_philosophers)
-	{
-		debg = pthread_create(&philo[i].thread, NULL, (void *)routine, &philo[i]);
-		if (debg != 0)
-			printf("creat ko\n");
-		i++;
-	}
-	pthread_create(&monitor, NULL, (void *)big_brother, philo);
-	i = 0;
-	while (i < config.number_of_philosophers)
-	{
-		debg = pthread_join(philo[i].thread, NULL);
-		if (debg != 0)
-			printf("join ko\n");
-		i++;
-	}
-	pthread_join(monitor, NULL);
-	i = 0;
-	while (i < config.number_of_philosophers)
-	{
-		pthread_mutex_destroy(philo[i].last_ate);
-		free(philo[i].last_ate);
-		pthread_mutex_destroy(&(info.fork)[i]);
-		i++;
-	}
-	free(info.fork);
-	pthread_mutex_destroy(info.end_meals);
-	pthread_mutex_destroy(info.get_time_and_print);
-	pthread_mutex_destroy(info.end_flag);
-	free(info.end_meals);
-	free(info.get_time_and_print);
-	free(info.end_flag);
-	free(philo);
+	thread_processing(config.number_of_philosophers, philo);
+	
+//	i = 0;
+//	while (i < config.number_of_philosophers)
+//	{
+//		debg = pthread_create(&philo[i].thread, NULL, (void *)routine, &philo[i]);
+//		if (debg != 0)
+//			printf("creat ko\n");
+//		i++;
+//	}
+//	pthread_create(&monitor, NULL, (void *)big_brother, philo);
+//	i = 0;
+//	while (i < config.number_of_philosophers)
+//	{
+//		debg = pthread_join(philo[i].thread, NULL);
+////		if (debg != 0)
+////			printf("join ko\n");
+////		i++;
+//	}
+//	pthread_join(monitor, NULL);
+
+	destroy_mutex(config.number_of_philosophers, &info, &philo);
+//	i = 0;
+//	while (i < config.number_of_philosophers)
+//	{
+//		pthread_mutex_destroy(philo[i].last_ate);
+//		free(philo[i].last_ate);
+//		pthread_mutex_destroy(&(info.fork)[i]);
+//		i++;
+//	}
+//	free(info.fork);
+//	pthread_mutex_destroy(info.end_meals);
+//	pthread_mutex_destroy(info.get_time_and_print);
+//	pthread_mutex_destroy(info.end_flag);
+//	free(info.end_meals);
+//	free(info.get_time_and_print);
+//	free(info.end_flag);
+//	free(philo);
 	return (0);
 }

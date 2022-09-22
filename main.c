@@ -274,7 +274,7 @@ void	eating(t_philo *philo)
 	update_last_ate_time(philo);
 	sleep_start_time = get_elapsed_time_in_ms(philo->config->start_time);
 	while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time < philo->config->time_to_eat)
-		usleep(10);
+		usleep(500);
 	philo->number_of_meals++;
 }
 
@@ -285,19 +285,12 @@ void	sleeping(t_philo *philo)
 	print_status(SLEEPING, philo);
 	sleep_start_time = get_elapsed_time_in_ms(philo->config->start_time);
 	while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time < philo->config->time_to_sleep)
-		usleep(10);
+		usleep(500);
 }
 
 void	thinking(t_philo *philo)
 {
 	print_status(THINKING, philo);
-}
-
-int	ft_abs(int num)
-{
-	if (num < 0)
-		return (-(num + 1) + 1u);
-	return (num);
 }
 
 void	routine(void *arg)
@@ -307,7 +300,7 @@ void	routine(void *arg)
 
 	philo = (t_philo *)arg;
 	n = philo->config->number_of_philosophers;
-	if (((philo->id + 1) % 2 == 0) || ((philo->id + 1) % 5 == 0))
+	if ((philo->id + 1) % 2 == 0)
 		usleep(200);
 	while (!check_end(philo))
 	{
@@ -362,7 +355,7 @@ void	big_brother(void *arg)
 			pthread_mutex_unlock(philo[i].last_ate); //so_far
 			i++;
 		}
-		usleep(100);
+		usleep(300);
 	}
 }
 

@@ -49,6 +49,7 @@ struct s_philo
 {
 	int			id;
 	int			number_of_meals;
+	int			ideal_time;
 	long		last_ate_time;
 	t_mutex		*last_ate;
 	pthread_t	thread;
@@ -74,7 +75,8 @@ int		init_philosophers(t_config *config, t_overall *info, t_philo **philo);
 void	init_mutex(int n, t_overall *info, t_philo **philo);
 
 long	get_elapsed_time_in_ms(long start_time);
-void	highly_accurate_usleep_in_ms(int sleep_time, t_philo *philo);
+void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int flag);
+//void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int status);
 bool	check_end(t_philo *philo);
 void	print_status(int status, t_philo *philo);
 void	update_last_ate_time(t_philo *philo);

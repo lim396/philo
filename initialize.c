@@ -37,18 +37,22 @@ int	init_philosophers(t_config *config, t_overall *info, t_philo **philo)
 	*philo = (t_philo *)ft_calloc(sizeof(t_philo), n);
 	if (*philo == NULL)
 		return (malloc_error_handler(0, info, philo));
-	i = 0;
-	while (i < n)
+	i = -1;
+	while (++i < n)
 	{
 		(*philo)[i].id = i;
 		(*philo)[i].number_of_meals = 0;
 		(*philo)[i].config = config;
+		(*philo)[i].ideal_time = 0;
+		if ((i + 1) % 2 == 0)
+			(*philo)[i].ideal_time = config->time_to_eat;
+//		if (n % 2 != 0 && (i + 1) % n == 0)
+//			(*philo)[i].ideal_time = config->time_to_eat * 2;
 		(*philo)[i].info = info;
 		(*philo)[i].last_ate_time = 0;
 		(*philo)[i].last_ate = (t_mutex *)malloc(sizeof(t_mutex));
 		if ((*philo)[i].last_ate == NULL)
 			return (malloc_error_handler(i, info, philo));
-		i++;
 	}
 	return (0);
 }

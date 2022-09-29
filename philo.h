@@ -38,9 +38,9 @@ typedef struct s_config		t_config;
 struct s_config
 {
 	int		num_of_philo;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
+	long	time_to_die;
+	long	time_to_eat;
+	long	time_to_sleep;
 	int		num_of_must_eat;
 	long	start_time;
 };
@@ -61,7 +61,7 @@ struct s_philo
 {
 	int			id;
 	int			number_of_meals;
-	int			ideal_time;
+	long		ideal_time;
 	long		last_ate_time;
 	t_mutex		*last_ate;
 	pthread_t	thread;
@@ -87,7 +87,7 @@ int		init_philosophers(t_config *config, t_overall *info, t_philo **philo);
 void	init_mutex(int n, t_overall *info, t_philo **philo);
 
 long	get_elapsed_time_in_ms(long start_time);
-void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int flag);
+void	high_accuracy_usleep_in_ms(long sleep_time, t_philo *philo);
 //void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int status);
 bool	check_end(t_philo *philo);
 void	print_status(int status, t_philo *philo);

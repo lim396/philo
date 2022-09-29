@@ -23,7 +23,7 @@ void	eating(t_philo *philo)
 	print_status(TAKEN_A_FORK, philo);
 	print_status(EATINGN, philo);
 	update_last_ate_time(philo);
-	high_accuracy_usleep_in_ms(philo->config->time_to_eat, philo, 1);
+	high_accuracy_usleep_in_ms(philo->config->time_to_eat, philo);
 	philo->number_of_meals++;
 	pthread_mutex_unlock(&(philo->info->fork)[philo->id]);
 	pthread_mutex_unlock(&(philo->info->fork)[(philo->id + 1) % n]);
@@ -32,7 +32,7 @@ void	eating(t_philo *philo)
 void	sleeping(t_philo *philo)
 {
 	print_status(SLEEPING, philo);
-	high_accuracy_usleep_in_ms(philo->config->time_to_sleep, philo, 1);
+	high_accuracy_usleep_in_ms(philo->config->time_to_sleep, philo);
 }
 
 void	thinking(t_philo *philo)
@@ -50,7 +50,7 @@ void	thinking(t_philo *philo)
 	}
 	print_status(THINKING, philo);
 	if (sleep_time > 0)
-		high_accuracy_usleep_in_ms(sleep_time, philo, 1);
+		high_accuracy_usleep_in_ms(sleep_time, philo);
 }
 
 void	waiting_to_die_with_a_fork(t_philo *philo)
@@ -74,7 +74,7 @@ void	routine(void *arg)
 	if ((philo->id + 1) % 2 == 0)
 		usleep(500);
 	if (n % 2 != 0 && (philo->id + 1) % n == 0)
-		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo, 1);
+		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo);
 	while (!check_end(philo))
 	{
 		eating(philo);

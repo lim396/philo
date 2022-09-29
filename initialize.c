@@ -15,9 +15,9 @@
 void	init_config(char **argv, t_config *config)
 {
 	config->num_of_philo = ft_atoi(argv[1]);
-	config->time_to_die = ft_atoi(argv[2]);
-	config->time_to_eat = ft_atoi(argv[3]);
-	config->time_to_sleep = ft_atoi(argv[4]);
+	config->time_to_die = (long)ft_atoi(argv[2]);
+	config->time_to_eat = (long)ft_atoi(argv[3]);
+	config->time_to_sleep = (long)ft_atoi(argv[4]);
 	config->num_of_must_eat = -1;
 	if (argv[5])
 		config->num_of_must_eat = ft_atoi(argv[5]);

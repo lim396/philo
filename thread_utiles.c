@@ -29,13 +29,13 @@ void	print_status(int status, t_philo *philo)
 	pthread_mutex_lock(philo->info->get_time_and_print);
 	just_now = get_elapsed_time_in_ms(philo->config->start_time);
 	if (status == TAKEN_A_FORK && !check_end(philo))
-		printf("%ld %d has taken a fork\n", just_now, philo->id + 1);
+		printf("%d %d has taken a fork\n", philo->ideal_time, philo->id + 1);
 	else if (status == EATINGN && !check_end(philo))
-		printf("%ld %d is eating\n", just_now, philo->id + 1);
+		printf("%d %d is eating\n", philo->ideal_time, philo->id + 1);
 	else if (status == SLEEPING && !check_end(philo))
-		printf("%ld %d is sleeping\n", just_now, philo->id + 1);
+		printf("%d %d is sleeping\n", philo->ideal_time, philo->id + 1);
 	else if (status == THINKING && !check_end(philo))
-		printf("%ld %d is thinking\n", just_now, philo->id + 1);
+		printf("%d %d is thinking\n", philo->ideal_time, philo->id + 1);
 	else if (status == DIE)
 		printf("%ld %d died\n", just_now, philo->id + 1);
 	pthread_mutex_unlock(philo->info->get_time_and_print);
@@ -44,7 +44,8 @@ void	print_status(int status, t_philo *philo)
 void	update_last_ate_time(t_philo *philo)
 {
 	pthread_mutex_lock(philo->last_ate);
-	philo->last_ate_time = get_elapsed_time_in_ms(philo->config->start_time);
+	philo->last_ate_time = philo->ideal_time;
+//	philo->last_ate_time = get_elapsed_time_in_ms(philo->config->start_time);
 	pthread_mutex_unlock(philo->last_ate);
 }
 

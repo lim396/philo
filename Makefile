@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -pthread
 NAME = philo
 SRCS =	check_args.c \
 		end_process.c \

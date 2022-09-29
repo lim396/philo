@@ -63,7 +63,7 @@ void	routine(void *arg)
 	if (philo->config->num_of_philo == 1)
 		return (waiting_to_die_with_a_fork(philo));
 	if ((philo->id + 1) % 2 == 0)
-		usleep(200);
+		usleep(500);
 	if (n % 2 != 0 && (philo->id + 1) % n == 0)
 		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo, 1);
 //		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo, 0);

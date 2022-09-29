@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/30 02:46:42 by shongou           #+#    #+#             */
+/*   Updated: 2022/09/30 02:46:44 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	eating(t_philo *philo)
@@ -12,7 +24,6 @@ void	eating(t_philo *philo)
 	print_status(EATINGN, philo);
 	update_last_ate_time(philo);
 	high_accuracy_usleep_in_ms(philo->config->time_to_eat, philo, 1);
-//	high_accuracy_usleep_in_ms(philo->config->time_to_eat, philo, EATINGN);
 	philo->number_of_meals++;
 	pthread_mutex_unlock(&(philo->info->fork)[philo->id]);
 	pthread_mutex_unlock(&(philo->info->fork)[(philo->id + 1) % n]);
@@ -22,14 +33,13 @@ void	sleeping(t_philo *philo)
 {
 	print_status(SLEEPING, philo);
 	high_accuracy_usleep_in_ms(philo->config->time_to_sleep, philo, 1);
-//	high_accuracy_usleep_in_ms(philo->config->time_to_sleep, philo, SLEEPING);
 }
 
 void	thinking(t_philo *philo)
 {
 	int	sleep_time;
 	int	n;
-	
+
 	n = 0;
 	sleep_time = 0;
 	if (philo->config->num_of_philo % 2 != 0
@@ -41,7 +51,6 @@ void	thinking(t_philo *philo)
 	print_status(THINKING, philo);
 	if (sleep_time > 0)
 		high_accuracy_usleep_in_ms(sleep_time, philo, 1);
-//		high_accuracy_usleep_in_ms(sleep_time, philo, THINKING);
 }
 
 void	waiting_to_die_with_a_fork(t_philo *philo)
@@ -66,7 +75,6 @@ void	routine(void *arg)
 		usleep(500);
 	if (n % 2 != 0 && (philo->id + 1) % n == 0)
 		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo, 1);
-//		high_accuracy_usleep_in_ms(philo->config->time_to_eat * 2, philo, 0);
 	while (!check_end(philo))
 	{
 		eating(philo);

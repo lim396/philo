@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   thread_utiles.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/30 02:46:54 by shongou           #+#    #+#             */
+/*   Updated: 2022/09/30 02:46:56 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 bool	check_end(t_philo *philo)
@@ -49,32 +61,17 @@ void	update_last_ate_time(t_philo *philo)
 	pthread_mutex_unlock(philo->last_ate);
 }
 
-//void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int status)
 void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int flag)
 {
 	long	sleep_start_time;
 	int		delay;
-	
+
 	delay = 0;
 	sleep_start_time = get_elapsed_time_in_ms(philo->config->start_time);
-//	if (status == EATINGN)
 	delay = sleep_start_time - philo->ideal_time;
 	while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time
 		< sleep_time - delay)
 		usleep(500);
-//	if (status == EATINGN && philo->config->num_of_philo % 2 == 0)
-//	{
-//	philo->ideal_time += sleep_time + philo->config->time_to_sleep;
 	if (flag)
 		philo->ideal_time += sleep_time;
-//	}
-//	else if(status == EATINGN && philo->config->num_of_philo % 2 != 0)
-//	{
-//		if (sleep_time * 3 > sleep_time + philo->config->time_to_sleep)
-//		{
-//			philo->ideal_time += sleep_time * 3;
-//		}
-//		else
-//			philo->ideal_time += sleep_time + philo->config->time_to_sleep;
-//	}
 }

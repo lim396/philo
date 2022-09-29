@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   monitor.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/30 02:46:25 by shongou           #+#    #+#             */
+/*   Updated: 2022/09/30 02:46:27 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	check_died(int i, t_philo *philo)
@@ -26,7 +38,7 @@ void	big_brother(void *arg)
 
 	philo = (t_philo *)arg;
 	while (1)
-	{	
+	{
 		pthread_mutex_lock(philo->info->end_meals);
 		if (philo->info->n_of_finish_eat == philo->config->num_of_philo)
 		{

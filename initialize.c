@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   initialize.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/30 02:46:14 by shongou           #+#    #+#             */
+/*   Updated: 2022/09/30 02:46:15 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	init_config(char **argv, t_config *config)
@@ -46,8 +58,6 @@ int	init_philosophers(t_config *config, t_overall *info, t_philo **philo)
 		(*philo)[i].ideal_time = 0;
 		if ((i + 1) % 2 == 0)
 			(*philo)[i].ideal_time = config->time_to_eat;
-//		if (n % 2 != 0 && (i + 1) % n == 0)
-//			(*philo)[i].ideal_time = config->time_to_eat * 2;
 		(*philo)[i].info = info;
 		(*philo)[i].last_ate_time = 0;
 		(*philo)[i].last_ate = (t_mutex *)malloc(sizeof(t_mutex));

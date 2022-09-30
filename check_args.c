@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-bool	is_natural_num_ex_zero(const char *str)
+static bool	is_natural_num_ex_zero(const char *str)
 {
 	long long	decimal;
 

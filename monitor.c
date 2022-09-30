@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	check_died(int i, t_philo *philo)
+static int	check_died(int i, t_philo *philo)
 {
 	long	now_time;
 

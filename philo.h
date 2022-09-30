@@ -75,11 +75,11 @@ void	ft_putstr_fd(char *s, int fd);
 int		ft_atoi(const char *str);
 void	*ft_calloc(size_t count, size_t size);
 
-bool	is_natural_num_ex_zero(const char *str);
 bool	check_args(int argc, char **argv);
 
 int		malloc_error_handler(int n, t_overall *info, t_philo **philo);
 int		thread_error_handler(t_philo *philo, int flag);
+void	print_args_error(void);
 
 void	init_config(char **argv, t_config *config);
 int		init_overall_info(int n, t_overall *info);
@@ -88,18 +88,12 @@ void	init_mutex(int n, t_overall *info, t_philo **philo);
 
 long	get_elapsed_time_in_ms(long start_time);
 void	high_accuracy_usleep_in_ms(long sleep_time, t_philo *philo);
-//void	high_accuracy_usleep_in_ms(int sleep_time, t_philo *philo, int status);
 bool	check_end(t_philo *philo);
 void	print_status(int status, t_philo *philo);
 void	update_last_ate_time(t_philo *philo);
 
-void	eating(t_philo *philo);
-void	sleeping(t_philo *philo);
-void	thinking(t_philo *philo);
-void	waiting_to_die_with_a_fork(t_philo *philo);
 void	routine(void *arg);
 
-int		check_died(int i, t_philo *philo);
 void	big_brother(void *arg);
 
 int		thread_processing(int n, t_philo *philo);

@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void	eating(t_philo *philo)
+static void	eating(t_philo *philo)
 {
 	int		n;
 
@@ -29,13 +29,13 @@ void	eating(t_philo *philo)
 	pthread_mutex_unlock(&(philo->info->fork)[(philo->id + 1) % n]);
 }
 
-void	sleeping(t_philo *philo)
+static void	sleeping(t_philo *philo)
 {
 	print_status(SLEEPING, philo);
 	high_accuracy_usleep_in_ms(philo->config->time_to_sleep, philo);
 }
 
-void	thinking(t_philo *philo)
+static void	thinking(t_philo *philo)
 {
 	int	sleep_time;
 	int	n;
@@ -53,7 +53,7 @@ void	thinking(t_philo *philo)
 		high_accuracy_usleep_in_ms(sleep_time, philo);
 }
 
-void	waiting_to_die_with_a_fork(t_philo *philo)
+static void	waiting_to_die_with_a_fork(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->info->fork)[philo->id]);
 	print_status(TAKEN_A_FORK, philo);

@@ -20,7 +20,10 @@ int	main(int argc, char **argv)
 	struct timeval	now;
 
 	if (!check_args(argc, argv))
+	{
+		print_args_error();
 		return (1);
+	}
 	init_config(argv, &config);
 	if (init_overall_info(config.num_of_philo, &info) != 0)
 		return (1);

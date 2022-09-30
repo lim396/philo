@@ -57,7 +57,6 @@ void	update_last_ate_time(t_philo *philo)
 {
 	pthread_mutex_lock(philo->last_ate);
 	philo->last_ate_time = philo->ideal_time;
-//	philo->last_ate_time = get_elapsed_time_in_ms(philo->config->start_time);
 	pthread_mutex_unlock(philo->last_ate);
 }
 

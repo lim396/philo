@@ -6,7 +6,7 @@
 /*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/30 02:46:54 by shongou           #+#    #+#             */
-/*   Updated: 2022/09/30 02:46:56 by shongou          ###   ########.fr       */
+/*   Updated: 2022/09/30 17:03:13 by shongou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,6 @@ void	high_accuracy_usleep_in_ms(long sleep_time, t_philo *philo)
 	delay = sleep_start_time - philo->ideal_time;
 	while (get_elapsed_time_in_ms(philo->config->start_time) - sleep_start_time
 		< sleep_time - delay)
-		usleep(500);
+		usleep(1000);
 	philo->ideal_time += sleep_time;
 }

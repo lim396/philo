@@ -94,7 +94,7 @@ void	update_last_ate_time(t_philo *philo);
 
 void	routine(void *arg);
 
-void	big_brother(void *arg);
+void	monitor(void *arg);
 
 int		thread_processing(int n, t_philo *philo);
 

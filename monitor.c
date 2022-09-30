@@ -31,7 +31,7 @@ static int	check_died(int i, t_philo *philo)
 	return (0);
 }
 
-void	big_brother(void *arg)
+void	monitor(void *arg)
 {
 	int		i;
 	t_philo	*philo;

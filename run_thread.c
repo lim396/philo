@@ -16,7 +16,7 @@ int	thread_processing(int n, t_philo *philo)
 {
 	int			i;
 	int			j;
-	pthread_t	monitor;
+	pthread_t	monitor_thread;
 	int			error_flag;
 
 	error_flag = 0;
@@ -29,13 +29,13 @@ int	thread_processing(int n, t_philo *philo)
 			break ;
 		}
 	}
-	if (pthread_create(&monitor, NULL, (void *)big_brother, philo))
+	if (pthread_create(&monitor_thread, NULL, (void *)monitor, philo))
 		error_flag |= thread_error_handler(philo, MONITOR_ERROR);
 	j = 0;
 	while (j < i)
 		pthread_join(philo[j++].thread, NULL);
 	if (!(error_flag & MONITOR_ERROR))
-		pthread_join(monitor, NULL);
+		pthread_join(monitor_thread, NULL);
 	if (error_flag > 0)
 		return (1);
 	return (0);

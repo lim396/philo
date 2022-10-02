@@ -83,7 +83,6 @@ void	routine(void *arg)
 			pthread_mutex_lock(philo->info->end_meals);
 			philo->info->n_of_finish_eat++;
 			pthread_mutex_unlock(philo->info->end_meals);
-			return ;
 		}
 		sleeping(philo);
 		thinking(philo);

@@ -43,6 +43,9 @@ void	monitor(void *arg)
 		if (philo->info->n_of_finish_eat == philo->config->num_of_philo)
 		{
 			pthread_mutex_unlock(philo->info->end_meals);
+			pthread_mutex_lock(philo->info->end_flag);
+			philo->info->end_simulation = 1;
+			pthread_mutex_unlock(philo->info->end_flag);
 			return ;
 		}
 		pthread_mutex_unlock(philo->info->end_meals);

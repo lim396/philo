@@ -17,9 +17,15 @@ static void	eating(t_philo *philo)
 	int		n;
 
 	n = philo->config->num_of_philo;
-	pthread_mutex_lock(&(philo->info->fork)[philo->id]);
+	if (philo->id == n - 1)
+		pthread_mutex_lock(&(philo->info->fork)[(philo->id + 1) % n]);
+	else
+		pthread_mutex_lock(&(philo->info->fork)[philo->id]);
 	print_status(TAKEN_A_FORK, philo);
-	pthread_mutex_lock(&(philo->info->fork)[(philo->id + 1) % n]);
+	if (philo->id == n - 1)
+		pthread_mutex_lock(&(philo->info->fork)[philo->id]);
+	else
+		pthread_mutex_lock(&(philo->info->fork)[(philo->id + 1) % n]);
 	print_status(TAKEN_A_FORK, philo);
 	print_status(EATINGN, philo);
 	update_last_ate_time(philo);
